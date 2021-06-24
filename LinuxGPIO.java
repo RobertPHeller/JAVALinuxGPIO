@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : Robert Heller
  *  Created       : Thu Jun 24 07:48:07 2021
- *  Last Modified : <210624.0933>
+ *  Last Modified : <210624.0946>
  *
  *  Description	
  *
@@ -44,6 +44,7 @@ package com.deepsoft;
 import java.io.*;
 import java.util.*;
 import java.lang.*;
+import java.lang.Integer.*;
 
 public class LinuxGPIO {
     public enum Direction {IN, OUT, HIGH, LOW};
@@ -53,13 +54,13 @@ public class LinuxGPIO {
     private static final String VALUEFMT = "/sys/class/gpio/gpio%d/value";
     private int pinnumber_;
     private Direction direction_;
-    public LinuxGPIO(int pinnumber, Direction direction) {
+    public LinuxGPIO(int pinnumber, Direction direction) throws Exception {
         pinnumber_ = pinnumber;
         direction_ = direction;
         PrintStream exportFp = new PrintStream(new File(EXPORT));
         exportFp.printf("%d\n",pinnumber_);
         exportFp.close();
-        dirfile = new File(String.format(DIRECTIONFMT,pinnumber_));
+        File dirfile = new File(String.format(DIRECTIONFMT,pinnumber_));
         while (true) {
             if (dirfile.canWrite()) break;
             Thread.sleep(50);
@@ -81,29 +82,30 @@ public class LinuxGPIO {
         }
         dirFp.close();
     }
-    public int Read() {
+    public int Read()  throws Exception {
         FileInputStream in = new FileInputStream(String.format(VALUEFMT,pinnumber_));
         BufferedReader d = new BufferedReader(new InputStreamReader(in));
-        return( int.ParseInt(d.readLine()) );
+        return( Integer.parseInt(d.readLine()) );
     }
-    public void Write(int v) {
+    public void Write(int v)  throws Exception {
         PrintStream out = new PrintStream(new File(String.format(VALUEFMT,pinnumber_)));
         out.printf("%d\n",v);
         out.close();
     }
-    public Direction GetDirection() {
+    public Direction GetDirection()  throws Exception {
         FileInputStream in = new FileInputStream(String.format(DIRECTIONFMT,pinnumber_));
         BufferedReader d = new BufferedReader(new InputStreamReader(in));
         String dir = d.readLine();
         if (dir == "in") {
-            return IN;
+            return Direction.IN;
         } else if (dir == "out") {
-            return OUT;
+            return Direction.OUT;
         } else if (dir == "high") {
-            return HIGH;
+            return Direction.HIGH;
         } else if (dir == "low") {
-            return LOW;
+            return Direction.LOW;
         }
+        return Direction.IN;
     }
 }
 
