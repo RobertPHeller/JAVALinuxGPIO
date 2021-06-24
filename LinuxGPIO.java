@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : Robert Heller
  *  Created       : Thu Jun 24 07:48:07 2021
- *  Last Modified : <210624.0856>
+ *  Last Modified : <210624.0933>
  *
  *  Description	
  *
@@ -87,7 +87,7 @@ public class LinuxGPIO {
         return( int.ParseInt(d.readLine()) );
     }
     public void Write(int v) {
-        out = new PrintStream(new File(String.format(VALUEFMT,pinnumber_)));
+        PrintStream out = new PrintStream(new File(String.format(VALUEFMT,pinnumber_)));
         out.printf("%d\n",v);
         out.close();
     }
